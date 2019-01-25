@@ -1,9 +1,13 @@
 # Netmap Query Language
 
-**SELECT 1 Country FILTER Location NE Asia**
+## Demo
+
+[![asciicast](https://asciinema.org/a/iehrM1G1muRtPCQPcsEEmRG8V.svg)](https://asciinema.org/a/iehrM1G1muRtPCQPcsEEmRG8V)
+
+**SELECT 1 Country FILTER Location NE Europe**
 ![Example 1](./examples/1.png)
 
-**SELECT 2 City FILTER Location EQ Europe**
+**SELECT 2 Country FILTER Country NE Russia**
 ![Example 2](./examples/2.png)
 
 ## Description
