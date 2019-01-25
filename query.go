@@ -1,0 +1,181 @@
+package query
+
+import (
+	"unicode"
+
+	"github.com/pkg/errors"
+	"github.com/vito/go-parse"
+)
+
+var (
+	ws      = parsec.Many(parsec.Satisfy(unicode.IsSpace))
+	ws1     = parsec.Many1(parsec.Satisfy(unicode.IsSpace))
+	strToOp = map[string]Operation{
+		"EQ": Operation_EQ,
+		"=":  Operation_EQ,
+		"NE": Operation_NE,
+		"!=": Operation_NE,
+		"LT": Operation_LT,
+		"<":  Operation_LT,
+		"LE": Operation_LE,
+		"<=": Operation_LE,
+		"GT": Operation_GT,
+		">":  Operation_GT,
+		"GE": Operation_GE,
+		">=": Operation_GE,
+	}
+)
+
+func ParseQuery(s string) ([]Selector, error) {
+	sv := &parsec.StringVessel{}
+	sv.SetInput(s)
+	if out, ok := sfUnion(sv); ok {
+		return out.([]Selector), nil
+	}
+	return nil, errors.New("cant parse query")
+}
+
+func filterGroup(in parsec.Vessel) (parsec.Output, bool) {
+	out, ok := forceCollect(
+		parsec.String("FILTER"),
+		parsec.Many1(forceCollect(ws1, parseString, ws1, parseOperation, ws1, parseString)),
+	)(in)
+	if !ok {
+		return nil, false
+	}
+
+	var fs []Filter
+	if lst := out.([]interface{}); len(lst) == 2 {
+		for _, c := range lst[1].([]interface{}) {
+			rule := c.([]interface{})
+			fs = append(fs, Filter{
+				Key: rule[1].(string),
+				F:   NewFilter(rule[3].(Operation), rule[5].(string)),
+			})
+		}
+	}
+	return fs, true
+}
+
+func sfGroup(in parsec.Vessel) (parsec.Output, bool) {
+	out, ok := forceCollect(
+		ws, parsec.String("SELECT"),
+		parsec.Many1(forceCollect(ws1, parseNumber, ws1, parseString)),
+		trySucceed(forceCollect(ws1, filterGroup)),
+	)(in)
+	if !ok {
+		return nil, ok
+	}
+
+	lst := out.([]interface{})
+
+	var ss []Select
+	for _, c := range lst[2].([]interface{}) {
+		ss = append(ss, Select{
+			Key:   c.([]interface{})[3].(string),
+			Count: c.([]interface{})[1].(int32),
+		})
+	}
+
+	var fs []Filter
+	if lst[3] != nil {
+		fs = lst[3].([]interface{})[1].([]Filter)
+	}
+
+	return Selector{Filters: fs, Selectors: ss}, ok
+}
+
+func sfUnion(in parsec.Vessel) (parsec.Output, bool) {
+	out, ok := forceCollect(
+		sfGroup,
+		parsec.Many(forceCollect(
+			ws, parsec.String(";"), ws,
+			sfGroup,
+		)),
+	)(in)
+	if !ok {
+		return nil, false
+	}
+
+	// return error if there are any extra symbols
+	if _, ok := in.Next(); ok {
+		return nil, false
+	}
+
+	lst := out.([]interface{})
+	s := []Selector{lst[0].(Selector)}
+	for _, c := range lst[1].([]interface{}) {
+		s = append(s, c.([]interface{})[3].(Selector))
+	}
+	return s, true
+}
+
+func parseOperation(in parsec.Vessel) (parsec.Output, bool) {
+	out, ok := parsec.Many1(parsec.Satisfy(func(r rune) bool { return !unicode.IsSpace(r) }))(in)
+	if !ok {
+		return nil, false
+	}
+
+	var s []rune
+	for _, c := range out.([]interface{}) {
+		s = append(s, c.(rune))
+	}
+
+	if op, ok := strToOp[string(s)]; ok {
+		return op, true
+	}
+	return nil, false
+}
+
+func parseString(in parsec.Vessel) (parsec.Output, bool) {
+	out, ok := parsec.Many1(parsec.Satisfy(
+		func(r rune) bool { return unicode.IsDigit(r) || unicode.IsLetter(r) }))(in)
+	if !ok {
+		return nil, false
+	}
+
+	var s []rune
+	for _, c := range out.([]interface{}) {
+		s = append(s, c.(rune))
+	}
+	return string(s), true
+}
+
+// Token that satisfies a condition.
+func parseNumber(in parsec.Vessel) (parsec.Output, bool) {
+	out, ok := parsec.Many1(parsec.Satisfy(unicode.IsNumber))(in)
+	if !ok {
+		return nil, false
+	}
+
+	r := int32(0)
+	for _, c := range out.([]interface{}) {
+		r = r*10 + (c.(rune) - '0')
+	}
+	return r, true
+}
+
+func forceCollect(parsers ...parsec.Parser) parsec.Parser {
+	return func(in parsec.Vessel) (parsec.Output, bool) {
+		matches := make([]interface{}, 0, len(parsers))
+		st, pos := in.GetState(), in.GetPosition()
+		for _, parser := range parsers {
+			match, ok := parser(in)
+			if !ok {
+				in.SetState(st)
+				in.SetPosition(pos)
+				return nil, false
+			}
+
+			matches = append(matches, match)
+		}
+		return matches, true
+	}
+}
+
+func trySucceed(p parsec.Parser) parsec.Parser {
+	return func(in parsec.Vessel) (parsec.Output, bool) {
+		out, _ := parsec.Try(p)(in)
+		return out, true
+	}
+}
