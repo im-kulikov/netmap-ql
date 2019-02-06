@@ -7,7 +7,7 @@ import (
 type (
 	Filter    = netgraph.Filter
 	Select    = netgraph.Select
-	Selector  = netgraph.Selector
+	SFGroup   = netgraph.SFGroup
 	Operation = netgraph.Operation
 )
 

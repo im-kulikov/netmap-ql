@@ -26,13 +26,47 @@ var (
 	}
 )
 
-func ParseQuery(s string) ([]Selector, error) {
+const defaultReplFactor = 2;
+
+type PlacementRule struct {
+	SFGroups []SFGroup
+	ReplFactor uint32
+}
+
+func ParseQuery(s string) (*PlacementRule, error) {
 	sv := &parsec.StringVessel{}
 	sv.SetInput(s)
-	if out, ok := sfUnion(sv); ok {
-		return out.([]Selector), nil
+	if out, ok := parseRule(sv); ok {
+		return out.(*PlacementRule), nil
 	}
 	return nil, errors.New("cant parse query")
+}
+
+func parseRule(in parsec.Vessel) (parsec.Output, bool) {
+	out, ok := forceCollect(trySucceed(replFactor), sfUnion)(in)
+	if !ok {
+		return nil, ok
+	}
+
+	result := out.([]interface{})
+
+	rf := uint32(defaultReplFactor)
+	if result[0] != nil {
+		rf = result[0].(uint32)
+	}
+
+	return &PlacementRule{
+		ReplFactor: rf,
+		SFGroups: result[1].([]SFGroup),
+	}, true
+}
+
+func replFactor(in parsec.Vessel) (parsec.Output, bool) {
+	out, ok := forceCollect(ws, parsec.String("RF"), ws1, parseNumber)(in)
+	if !ok {
+		return nil, ok
+	}
+	return uint32(out.([]interface{})[3].(int32)), true
 }
 
 func filterGroup(in parsec.Vessel) (parsec.Output, bool) {
@@ -82,7 +116,7 @@ func sfGroup(in parsec.Vessel) (parsec.Output, bool) {
 		fs = lst[3].([]interface{})[1].([]Filter)
 	}
 
-	return Selector{Filters: fs, Selectors: ss}, ok
+	return SFGroup{Filters: fs, Selectors: ss}, ok
 }
 
 func sfUnion(in parsec.Vessel) (parsec.Output, bool) {
@@ -103,9 +137,9 @@ func sfUnion(in parsec.Vessel) (parsec.Output, bool) {
 	}
 
 	lst := out.([]interface{})
-	s := []Selector{lst[0].(Selector)}
+	s := []SFGroup{lst[0].(SFGroup)}
 	for _, c := range lst[1].([]interface{}) {
-		s = append(s, c.([]interface{})[3].(Selector))
+		s = append(s, c.([]interface{})[3].(SFGroup))
 	}
 	return s, true
 }

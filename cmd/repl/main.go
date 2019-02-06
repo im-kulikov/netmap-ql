@@ -17,6 +17,7 @@ import (
 
 type state struct {
 	b  *netgraph.Bucket
+	rf uint32
 	ss []netgraph.Select
 	fs []netgraph.Filter
 }
@@ -189,6 +190,7 @@ func clearNetmap(c *ishell.Context) {
 	s.b = new(netgraph.Bucket)
 	s.ss = nil
 	s.fs = nil
+	s.rf = 0
 }
 
 func loadFromFile(c *ishell.Context) {
@@ -232,14 +234,14 @@ func addNode(c *ishell.Context) {
 func addQuery(c *ishell.Context) {
 	raw := strings.Join(c.Args, " ")
 
-	items, err := query.ParseQuery(raw)
+	rule, err := query.ParseQuery(raw)
 	if err != nil {
 		c.Err(errors.Wrapf(err, "bad query: %s", raw))
 		return
 	}
 
 	state := getState(c)
-	for _, item := range items {
+	for _, item := range rule.SFGroups {
 		for _, ss := range item.Selectors {
 			state.ss = append(state.ss, ss)
 		}
@@ -247,6 +249,7 @@ func addQuery(c *ishell.Context) {
 			state.fs = append(state.fs, fs)
 		}
 	}
+	state.rf = rule.ReplFactor
 }
 
 func dotToPng(in, out string) error {
