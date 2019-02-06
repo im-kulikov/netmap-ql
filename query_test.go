@@ -43,6 +43,7 @@ func TestParseOperation(t *testing.T) {
 
 	for _, s := range []string{"EE", ">>", "==="} {
 		out, ok = parseOp(s)
+		g.Expect(out).To(BeNil())
 		g.Expect(ok).To(BeFalse())
 	}
 }
@@ -65,13 +66,14 @@ func TestParseNumber(t *testing.T) {
 
 	for _, s := range []string{"a", ""} {
 		out, ok = parseNum(s)
+		g.Expect(out).To(BeNil())
 		g.Expect(ok).To(BeFalse())
 	}
 }
 
 func rule(s []SFGroup, rf uint32) *PlacementRule {
 	return &PlacementRule{
-		SFGroups: s,
+		SFGroups:   s,
 		ReplFactor: rf,
 	}
 }

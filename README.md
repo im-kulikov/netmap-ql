@@ -1,5 +1,10 @@
 # Netmap Query Language
 
+[![Build Status](https://travis-ci.org/nspcc-dev/netmap-ql.svg?branch=master)](https://travis-ci.org/nspcc-dev/netmap-ql)
+[![codecov](https://codecov.io/gh/nspcc-dev/netmap-ql/badge.svg)](https://codecov.io/gh/nspcc-dev/netmap-ql)
+[![Report](https://goreportcard.com/badge/github.com/nspcc-dev/netmap-ql)](https://goreportcard.com/report/github.com/nspcc-dev/netmap-ql)
+[![GitHub release](https://img.shields.io/github/release/nspcc-dev/netmap-ql.svg)](https://github.com/nspcc-dev/netmap-ql)
+
 ## Demo
 
 [![asciicast](https://asciinema.org/a/iehrM1G1muRtPCQPcsEEmRG8V.svg)](https://asciinema.org/a/iehrM1G1muRtPCQPcsEEmRG8V)
@@ -66,6 +71,16 @@ Operation can be one of EQ, NE, LT, LE, GT, GE:
 >>> query SELECT 1 Country FILTER Country NE Austria
 ```
 
+RF Example
+
+Replication factor
+
+```
+>>> add 1 /Location:Europe/Country:Germany
+>>> add 2 /Location:Europe/Country:France
+>>> add 3 /Location:Europe/Country:Austria
+>>> query RF 1 SELECT 1 Country FILTER Country NE Austria
+```
 
 ### get-selection
 `get-selection`

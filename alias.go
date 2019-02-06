@@ -5,24 +5,38 @@ import (
 )
 
 type (
-	Filter    = netgraph.Filter
-	Select    = netgraph.Select
-	SFGroup   = netgraph.SFGroup
+	// Filter struct
+	Filter = netgraph.Filter
+	// Select struct
+	Select = netgraph.Select
+	// SFGroup struct
+	SFGroup = netgraph.SFGroup
+	// Operation struct
 	Operation = netgraph.Operation
 )
 
 const (
-	Operation_EQ = netgraph.Operation_EQ
-	Operation_NE = netgraph.Operation_NE
-	Operation_LT = netgraph.Operation_LT
-	Operation_LE = netgraph.Operation_LE
-	Operation_GT = netgraph.Operation_GT
-	Operation_GE = netgraph.Operation_GE
+	// OperationEQ A == B
+	OperationEQ = netgraph.Operation_EQ
+	// OperationNE A != B
+	OperationNE = netgraph.Operation_NE
+	// OperationLT A < B
+	OperationLT = netgraph.Operation_LT
+	// OperationLE A <= B
+	OperationLE = netgraph.Operation_LE
+	// OperationGT A > B
+	OperationGT = netgraph.Operation_GT
+	// OperationGE A >= B
+	OperationGE = netgraph.Operation_GE
 )
 
 var (
-	FilterEQ  = netgraph.FilterEQ
-	FilterNE  = netgraph.FilterNE
-	FilterGT  = netgraph.FilterGT
+	// FilterEQ returns filter, which checks if value is equal to v.
+	FilterEQ = netgraph.FilterEQ
+	// FilterNE returns filter, which checks if value is not equal to v.
+	FilterNE = netgraph.FilterNE
+	// FilterGT returns filter, which checks if value is greater than v.
+	FilterGT = netgraph.FilterGT
+	// NewFilter constructs SimpleFilter.
 	NewFilter = netgraph.NewFilter
 )

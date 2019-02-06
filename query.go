@@ -11,28 +11,30 @@ var (
 	ws      = parsec.Many(parsec.Satisfy(unicode.IsSpace))
 	ws1     = parsec.Many1(parsec.Satisfy(unicode.IsSpace))
 	strToOp = map[string]Operation{
-		"EQ": Operation_EQ,
-		"=":  Operation_EQ,
-		"NE": Operation_NE,
-		"!=": Operation_NE,
-		"LT": Operation_LT,
-		"<":  Operation_LT,
-		"LE": Operation_LE,
-		"<=": Operation_LE,
-		"GT": Operation_GT,
-		">":  Operation_GT,
-		"GE": Operation_GE,
-		">=": Operation_GE,
+		"EQ": OperationEQ,
+		"=":  OperationEQ,
+		"NE": OperationNE,
+		"!=": OperationNE,
+		"LT": OperationLT,
+		"<":  OperationLT,
+		"LE": OperationLE,
+		"<=": OperationLE,
+		"GT": OperationGT,
+		">":  OperationGT,
+		"GE": OperationGE,
+		">=": OperationGE,
 	}
 )
 
-const defaultReplFactor = 2;
+const defaultReplFactor = 2
 
+// PlacementRule struct
 type PlacementRule struct {
-	SFGroups []SFGroup
+	SFGroups   []SFGroup
 	ReplFactor uint32
 }
 
+// ParseQuery converts string to PlacementRule struct
 func ParseQuery(s string) (*PlacementRule, error) {
 	sv := &parsec.StringVessel{}
 	sv.SetInput(s)
@@ -57,7 +59,7 @@ func parseRule(in parsec.Vessel) (parsec.Output, bool) {
 
 	return &PlacementRule{
 		ReplFactor: rf,
-		SFGroups: result[1].([]SFGroup),
+		SFGroups:   result[1].([]SFGroup),
 	}, true
 }
 
