@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/nspcc-dev/netmap/netgraph"
 	. "github.com/onsi/gomega"
 	gp "github.com/vito/go-parse"
 )
@@ -71,8 +72,8 @@ func TestParseNumber(t *testing.T) {
 	}
 }
 
-func rule(s []SFGroup, rf uint32) *PlacementRule {
-	return &PlacementRule{
+func rule(s []SFGroup, rf uint32) *netgraph.PlacementRule {
+	return &netgraph.PlacementRule{
 		SFGroups:   s,
 		ReplFactor: rf,
 	}
@@ -82,7 +83,7 @@ func TestParseQuery(t *testing.T) {
 	var (
 		out interface{}
 		err error
-		exp *PlacementRule
+		exp *netgraph.PlacementRule
 	)
 
 	g := NewGomegaWithT(t)

@@ -3,6 +3,7 @@ package query
 import (
 	"unicode"
 
+	"github.com/nspcc-dev/netmap/netgraph"
 	"github.com/pkg/errors"
 	"github.com/vito/go-parse"
 )
@@ -28,18 +29,12 @@ var (
 
 const defaultReplFactor = 2
 
-// PlacementRule struct
-type PlacementRule struct {
-	SFGroups   []SFGroup
-	ReplFactor uint32
-}
-
-// ParseQuery converts string to PlacementRule struct
-func ParseQuery(s string) (*PlacementRule, error) {
+// ParseQuery converts string to netgraph.PlacementRule struct
+func ParseQuery(s string) (*netgraph.PlacementRule, error) {
 	sv := &parsec.StringVessel{}
 	sv.SetInput(s)
 	if out, ok := parseRule(sv); ok {
-		return out.(*PlacementRule), nil
+		return out.(*netgraph.PlacementRule), nil
 	}
 	return nil, errors.New("cant parse query")
 }
@@ -57,7 +52,7 @@ func parseRule(in parsec.Vessel) (parsec.Output, bool) {
 		rf = result[0].(uint32)
 	}
 
-	return &PlacementRule{
+	return &netgraph.PlacementRule{
 		ReplFactor: rf,
 		SFGroups:   result[1].([]SFGroup),
 	}, true
