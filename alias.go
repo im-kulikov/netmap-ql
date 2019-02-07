@@ -1,42 +1,42 @@
 package query
 
 import (
-	"github.com/nspcc-dev/netmap/netgraph"
+	"github.com/nspcc-dev/netmap"
 )
 
 type (
 	// Filter struct
-	Filter = netgraph.Filter
+	Filter = netmap.Filter
 	// Select struct
-	Select = netgraph.Select
+	Select = netmap.Select
 	// SFGroup struct
-	SFGroup = netgraph.SFGroup
+	SFGroup = netmap.SFGroup
 	// Operation struct
-	Operation = netgraph.Operation
+	Operation = netmap.Operation
 )
 
 const (
 	// OperationEQ A == B
-	OperationEQ = netgraph.Operation_EQ
+	OperationEQ = netmap.Operation_EQ
 	// OperationNE A != B
-	OperationNE = netgraph.Operation_NE
+	OperationNE = netmap.Operation_NE
 	// OperationLT A < B
-	OperationLT = netgraph.Operation_LT
+	OperationLT = netmap.Operation_LT
 	// OperationLE A <= B
-	OperationLE = netgraph.Operation_LE
+	OperationLE = netmap.Operation_LE
 	// OperationGT A > B
-	OperationGT = netgraph.Operation_GT
+	OperationGT = netmap.Operation_GT
 	// OperationGE A >= B
-	OperationGE = netgraph.Operation_GE
+	OperationGE = netmap.Operation_GE
 )
 
 var (
 	// FilterEQ returns filter, which checks if value is equal to v.
-	FilterEQ = netgraph.FilterEQ
+	FilterEQ = netmap.FilterEQ
 	// FilterNE returns filter, which checks if value is not equal to v.
-	FilterNE = netgraph.FilterNE
+	FilterNE = netmap.FilterNE
 	// FilterGT returns filter, which checks if value is greater than v.
-	FilterGT = netgraph.FilterGT
+	FilterGT = netmap.FilterGT
 	// NewFilter constructs SimpleFilter.
-	NewFilter = netgraph.NewFilter
+	NewFilter = netmap.NewFilter
 )

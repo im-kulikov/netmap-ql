@@ -8,17 +8,17 @@ import (
 	"strings"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/nspcc-dev/netmap"
 	"github.com/nspcc-dev/netmap-ql"
-	"github.com/nspcc-dev/netmap/netgraph"
 	"github.com/pkg/errors"
 	"gopkg.in/abiosoft/ishell.v2"
 )
 
 type state struct {
-	b  *netgraph.Bucket
+	b  *netmap.Bucket
 	rf uint32
-	ss []netgraph.Select
-	fs []netgraph.Filter
+	ss []netmap.Select
+	fs []netmap.Filter
 }
 
 const stateKey = "state"
@@ -102,7 +102,7 @@ Example:
 func main() {
 	var (
 		st = &state{
-			b:  new(netgraph.Bucket),
+			b:  new(netmap.Bucket),
 			ss: nil,
 			fs: nil,
 		}
@@ -121,7 +121,7 @@ func getState(c *ishell.Context) *state {
 	return c.Get(stateKey).(*state)
 }
 
-func read(b *netgraph.Bucket, name string) error {
+func read(b *netmap.Bucket, name string) error {
 	data, err := ioutil.ReadFile(name)
 	if err != nil {
 		return err
@@ -129,7 +129,7 @@ func read(b *netgraph.Bucket, name string) error {
 	return b.UnmarshalBinary(data)
 }
 
-func write(b *netgraph.Bucket, name string) error {
+func write(b *netmap.Bucket, name string) error {
 	data, err := b.MarshalBinary()
 	if err != nil {
 		return err
@@ -186,7 +186,7 @@ func dumpNetmap(c *ishell.Context) {
 
 func clearNetmap(c *ishell.Context) {
 	s := getState(c)
-	s.b = new(netgraph.Bucket)
+	s.b = new(netmap.Bucket)
 	s.ss = nil
 	s.fs = nil
 	s.rf = 0

@@ -3,7 +3,7 @@ package query
 import (
 	"unicode"
 
-	"github.com/nspcc-dev/netmap/netgraph"
+	"github.com/nspcc-dev/netmap"
 	"github.com/pkg/errors"
 	"github.com/vito/go-parse"
 )
@@ -29,12 +29,12 @@ var (
 
 const defaultReplFactor = 2
 
-// ParseQuery converts string to netgraph.PlacementRule struct
-func ParseQuery(s string) (*netgraph.PlacementRule, error) {
+// ParseQuery converts string to netmap.PlacementRule struct
+func ParseQuery(s string) (*netmap.PlacementRule, error) {
 	sv := &parsec.StringVessel{}
 	sv.SetInput(s)
 	if out, ok := parseRule(sv); ok {
-		return out.(*netgraph.PlacementRule), nil
+		return out.(*netmap.PlacementRule), nil
 	}
 	return nil, errors.New("cant parse query")
 }
@@ -52,7 +52,7 @@ func parseRule(in parsec.Vessel) (parsec.Output, bool) {
 		rf = result[0].(uint32)
 	}
 
-	return &netgraph.PlacementRule{
+	return &netmap.PlacementRule{
 		ReplFactor: rf,
 		SFGroups:   result[1].([]SFGroup),
 	}, true
@@ -63,7 +63,7 @@ func replFactor(in parsec.Vessel) (parsec.Output, bool) {
 	if !ok {
 		return nil, ok
 	}
-	return uint32(out.([]interface{})[3].(int32)), true
+	return out.([]interface{})[3].(uint32), true
 }
 
 func filterGroup(in parsec.Vessel) (parsec.Output, bool) {
@@ -104,7 +104,7 @@ func sfGroup(in parsec.Vessel) (parsec.Output, bool) {
 	for _, c := range lst[2].([]interface{}) {
 		ss = append(ss, Select{
 			Key:   c.([]interface{})[3].(string),
-			Count: c.([]interface{})[1].(int32),
+			Count: c.([]interface{})[1].(uint32),
 		})
 	}
 
@@ -179,9 +179,9 @@ func parseNumber(in parsec.Vessel) (parsec.Output, bool) {
 		return nil, false
 	}
 
-	r := int32(0)
+	r := uint32(0)
 	for _, c := range out.([]interface{}) {
-		r = r*10 + (c.(rune) - '0')
+		r = r*10 + uint32(c.(rune)-'0')
 	}
 	return r, true
 }
