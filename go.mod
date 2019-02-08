@@ -3,7 +3,7 @@ module github.com/nspcc-dev/netmap-ql
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/mattn/go-colorable v0.1.0 // indirect
-	github.com/nspcc-dev/netmap v1.1.0
+	github.com/nspcc-dev/netmap v1.2.0
 	github.com/onsi/ginkgo v1.7.0 // indirect
 	github.com/onsi/gomega v1.4.3
 	github.com/pkg/errors v0.8.1

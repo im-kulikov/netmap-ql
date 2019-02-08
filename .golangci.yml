@@ -1,0 +1,21 @@
+# https://habr.com/company/roistat/blog/413175/
+# https://github.com/golangci/golangci-lint
+linters-settings:
+  govet:
+    check-shadowing: true
+  golint:
+    min-confidence: 0
+  gocyclo:
+    min-complexity: 30
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  gosimple:
+
+linters:
+  enable-all: true
+  fast: false

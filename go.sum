@@ -37,6 +37,8 @@ github.com/nspcc-dev/netmap v1.0.6 h1:BnXU81jrey+A6dMLOiRnM73JcqJU1nQxW1lc+seRgL
 github.com/nspcc-dev/netmap v1.0.6/go.mod h1:9vt5vDTHP0BdhUluQek4iFfMv+pCv5b1Kg7eM6WyQl8=
 github.com/nspcc-dev/netmap v1.1.0 h1:xl6EcXRJpxICdHCLoLYtTB7OCypnrZhNI1ZSC3s78vs=
 github.com/nspcc-dev/netmap v1.1.0/go.mod h1:9vt5vDTHP0BdhUluQek4iFfMv+pCv5b1Kg7eM6WyQl8=
+github.com/nspcc-dev/netmap v1.2.0 h1:QMDYBOYkw0lqdaavN/bGRcNSQ7ez4xWKsMHAN+MAOtY=
+github.com/nspcc-dev/netmap v1.2.0/go.mod h1:9vt5vDTHP0BdhUluQek4iFfMv+pCv5b1Kg7eM6WyQl8=
 github.com/onsi/ginkgo v1.6.0 h1:Ix8l273rp3QzYgXSR+c8d1fTG7UPgYkOSELPhiY/YGw=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=

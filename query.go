@@ -100,7 +100,7 @@ func sfGroup(in parsec.Vessel) (parsec.Output, bool) {
 
 	lst := out.([]interface{})
 
-	var ss []Select
+	var ss = make([]Select, 0, len(lst[2].([]interface{})))
 	for _, c := range lst[2].([]interface{}) {
 		ss = append(ss, Select{
 			Key:   c.([]interface{})[3].(string),
@@ -147,7 +147,7 @@ func parseOperation(in parsec.Vessel) (parsec.Output, bool) {
 		return nil, false
 	}
 
-	var s []rune
+	var s = make([]rune, 0, len(out.([]interface{})))
 	for _, c := range out.([]interface{}) {
 		s = append(s, c.(rune))
 	}
@@ -165,7 +165,7 @@ func parseString(in parsec.Vessel) (parsec.Output, bool) {
 		return nil, false
 	}
 
-	var s []rune
+	var s = make([]rune, 0, len(out.([]interface{})))
 	for _, c := range out.([]interface{}) {
 		s = append(s, c.(rune))
 	}
