@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/netmap"
-	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/require"
 	gp "github.com/vito/go-parse"
 )
 
@@ -34,18 +34,17 @@ func TestParseOperation(t *testing.T) {
 		ok      bool
 		parseOp = createParser(parseOperation)
 	)
-	g := NewGomegaWithT(t)
 
 	for s, op := range strToOp {
 		out, ok = parseOp(s)
-		g.Expect(ok).To(BeTrue())
-		g.Expect(out).To(Equal(op))
+		require.True(t, ok)
+		require.Equal(t, op, out)
 	}
 
 	for _, s := range []string{"EE", ">>", "==="} {
 		out, ok = parseOp(s)
-		g.Expect(out).To(BeNil())
-		g.Expect(ok).To(BeFalse())
+		require.Nil(t, out)
+		require.False(t, ok)
 	}
 }
 
@@ -56,19 +55,17 @@ func TestParseNumber(t *testing.T) {
 		n        int32
 		parseNum = createParser(parseNumber)
 	)
-	g := NewGomegaWithT(t)
-
 	for i := 0; i < 10; i++ {
 		n = rand.Int31()
 		out, ok = parseNum(strconv.FormatInt(int64(n), 10))
-		g.Expect(ok).To(BeTrue())
-		g.Expect(out).To(BeNumerically("==", n))
+		require.True(t, ok)
+		require.Equal(t, uint32(n), out)
 	}
 
 	for _, s := range []string{"a", ""} {
 		out, ok = parseNum(s)
-		g.Expect(out).To(BeNil())
-		g.Expect(ok).To(BeFalse())
+		require.Nil(t, out)
+		require.False(t, ok)
 	}
 }
 
@@ -86,37 +83,35 @@ func TestParseQuery(t *testing.T) {
 		exp *netmap.PlacementRule
 	)
 
-	g := NewGomegaWithT(t)
-
 	exp = rule([]SFGroup{{
 		Selectors: []Select{{Key: "Country", Count: 1}},
 	}}, defaultReplFactor)
 	out, err = ParseQuery(`SELECT 1 Country`)
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(out).To(Equal(exp))
+	require.NoError(t, err)
+	require.Equal(t, exp, out)
 
 	exp = rule([]SFGroup{{
 		Selectors: []Select{{Key: "Country", Count: 1}},
 	}}, 10)
 	out, err = ParseQuery(`RF 10 SELECT 1 Country`)
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(out).To(Equal(exp))
+	require.NoError(t, err)
+	require.Equal(t, exp, out)
 
 	exp = rule([]SFGroup{{
 		Selectors: []Select{{Key: "Country", Count: 1}},
 		Filters:   []Filter{{Key: "Country", F: FilterNE("Russia")}},
 	}}, defaultReplFactor)
 	out, err = ParseQuery(`SELECT 1 Country FILTER Country NE Russia`)
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(out).To(Equal(exp))
+	require.NoError(t, err)
+	require.Equal(t, exp, out)
 
 	exp = rule([]SFGroup{{
 		Selectors: []Select{{Key: "Country", Count: 11}},
 		Filters:   []Filter{{Key: "Trust", F: FilterGT(10)}},
 	}}, defaultReplFactor)
 	out, err = ParseQuery(`SELECT 11 Country FILTER Trust > 10`)
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(out).To(Equal(exp))
+	require.NoError(t, err)
+	require.Equal(t, exp, out)
 
 	exp = rule([]SFGroup{{
 		Selectors: []Select{
@@ -126,8 +121,8 @@ func TestParseQuery(t *testing.T) {
 		Filters: []Filter{{Key: "Location", F: FilterNE("Europe")}},
 	}}, 4)
 	out, err = ParseQuery(`RF 4 SELECT 1 Country 2 City FILTER Location NE Europe`)
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(out).To(Equal(exp))
+	require.NoError(t, err)
+	require.Equal(t, exp, out)
 
 	exp = rule([]SFGroup{
 		{
@@ -148,11 +143,11 @@ FILTER Location NE Europe
 ;
 SELECT 1 Country
 FILTER Country EQ Germany`)
-	g.Expect(err).NotTo(HaveOccurred())
-	g.Expect(out).To(Equal(exp))
+	require.NoError(t, err)
+	require.Equal(t, exp, out)
 
 	for _, q := range invalidQueries {
 		_, err = ParseQuery(q)
-		g.Expect(err).To(HaveOccurred(), "parsing query `%s`", q)
+		require.Errorf(t, err, "parsing query `%s`", q)
 	}
 }
